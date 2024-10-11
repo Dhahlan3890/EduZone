@@ -88,7 +88,7 @@ function OnCourseCard(props) {
         </div>
         
         <Typography>
-          {description}
+          {description.substring(0, 200)}
         </Typography>
       </CardBody>
       <CardFooter className="pt-0">

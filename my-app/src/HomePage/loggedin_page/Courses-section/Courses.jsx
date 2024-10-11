@@ -101,11 +101,11 @@ const Courses = () => {
               </div>
             </div>
           </Col>
-          {courses.map((item) => (
-            <Col lg="4" md="6" sm="6">
-              <CourseCard key={item.id} item={item} />
+          {courses.filter(item => !item.is_enrolled).map((item) => (
+            <Col lg="4" md="6" sm="6" key={item.id}> 
+              <CourseCard item={item} />
             </Col>
-          ))}
+          ))} 
         </Row>
       </Container>
     </section>

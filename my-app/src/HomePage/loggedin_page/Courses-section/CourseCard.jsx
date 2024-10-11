@@ -13,6 +13,7 @@ const CourseCard = (props) => {
   const checkEnrollment = async () => {
     try {
       const authTokens = localStorage.getItem('authTokens');
+      
       const tokens = JSON.parse(authTokens);
       const token = tokens.access;
 
@@ -74,7 +75,7 @@ const CourseCard = (props) => {
 
         <div style={style}>
           <p className="lesson d-flex align-items-center gap-1">
-            <i class="ri-book-open-line"></i> {description}
+            <i class="ri-book-open-line"></i> {description.substring(0, 200)}
           </p>
 
           

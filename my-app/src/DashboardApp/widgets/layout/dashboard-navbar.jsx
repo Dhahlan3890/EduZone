@@ -109,9 +109,9 @@ export function DashboardNavbar() {
               <UserCircleIcon cstrokeWidth={3} className="h-6 w-6 text-blue-gray-500" />
             </IconButton>
           </Link>
-          <div className="mr-auto md:mr-4 md:w-56">
+          {/* <div className="mr-auto md:mr-4 md:w-56">
             <Input label="Search" />
-          </div>
+          </div> */}
           <IconButton
             variant="text"
             color="blue-gray"
@@ -142,7 +142,7 @@ export function DashboardNavbar() {
               </svg>
             </IconButton>
           </Link>
-          <Menu>
+          {/* <Menu>
             <MenuHandler>
               <IconButton variant="text" color="blue-gray">
                 <BellIcon className="h-5 w-5 text-blue-gray-500" />
@@ -219,7 +219,7 @@ export function DashboardNavbar() {
                 </div>
               </MenuItem>
             </MenuList>
-          </Menu>
+          </Menu> */}
           <IconButton
             variant="text"
             color="blue-gray"
