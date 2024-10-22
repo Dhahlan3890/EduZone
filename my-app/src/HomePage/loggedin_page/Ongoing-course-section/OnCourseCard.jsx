@@ -1,5 +1,5 @@
 
-import courseImg01 from "../images/web-development.png";
+
 import EnrollButton from "./EnrollButton.js";
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
