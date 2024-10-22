@@ -244,7 +244,7 @@ export function Profile() {
           <div className="grid-cols-1 mb-12 grid gap-12 px-4 lg:grid-cols-2 xl:grid-cols-3">
             <div>
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                
+                Notification settings
               </Typography>
               <div className="flex flex-col gap-12">
                 {platformSettingsData.map(({ title, options }) => (
@@ -254,13 +254,15 @@ export function Profile() {
                     </Typography>
                     <div className="flex flex-col gap-6">
                       {options.map(({ checked, label }) => (
-                        <Typography
+                        <Switch
                           key={label}
-                          variant="body1"
-                          className={`text-sm font-normal text-blue-gray-500 ${checked ? 'font-bold' : ''}`}
-                        >
-                          {label}
-                        </Typography>
+                          id={label}
+                          label={label}
+                          defaultChecked={checked}
+                          labelProps={{
+                            className: 'text-sm font-normal text-blue-gray-500',
+                          }}
+                        />
                       ))}
                     </div>
                   </div>

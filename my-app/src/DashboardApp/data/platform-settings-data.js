@@ -4,15 +4,15 @@ export const platformSettingsData = [
     options: [
       {
         checked: true,
-        label: "Faster And Smoother",
+        label: "Email me when a new project created",
       },
       {
         checked: false,
-        label: "Unlock Exclusive Features",
+        label: "Email me when someone answers on my questions",
       },
       {
         checked: true,
-        label: "Access to Exclusive Features",
+        label: "Email me when someone mentions me",
       },
     ],
   },
@@ -20,16 +20,16 @@ export const platformSettingsData = [
     title: "application",
     options: [
       {
-        checked: true,
-        label: "Enhanced User Experience",
+        checked: false,
+        label: "New launches and projects",
       },
       {
         checked: true,
-        label: "Streamlined Processes",
+        label: "Monthly product updates",
       },
       {
-        checked: true,
-        label: "Increased Productivity",
+        checked: false,
+        label: "Subscribe to newsletter",
       },
     ],
   },

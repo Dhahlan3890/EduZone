@@ -33,6 +33,7 @@ import Ibm from "../../../img/ibm.png"
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import CourseUploadForm from "./CourseUploadForm";
+import ProjectUploadForm from "./ProjectUpload";
 import CourseList from "./CourseList";
 import { useNavigate } from 'react-router-dom';
 import StreamingApp from "./LiveStreaming";
@@ -48,10 +49,14 @@ export function Home() {
   const [message, setMessage] = useState('');
   const [profile, setProfile] = useState({});
   const [courses, setCourses] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [studentCourses, setStudentCourses] = useState([]);
   const [selectedCourseId, setSelectedCourseId] = useState(null);
+  const [studentProjects, setStudentProjects] = useState([]);
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [enrollmentStatuses, setEnrollmentStatuses] = useState({});
+  const [projectEnrollmentStatuses, setProjectEnrollmentStatuses] = useState({});
   const navigate = useNavigate();
   const [isStreaming, setIsStreaming] = useState(false);
   const [input, setInput] = useState('');
@@ -95,14 +100,23 @@ useEffect(() => {
       const tokens = JSON.parse(authTokens);
       const token = tokens.access;
 
-      const statuses = {};
+      const courseStatuses = {};
       for (const course of studentCourses) {
         const response = await axios.get(`http://localhost:8000/api/courses/${course.id}/`, {
           headers: { 'Authorization': `Bearer ${token}` },
         });
-        statuses[course.id] = response.data.is_enrolled;
+        courseStatuses[course.id] = response.data.is_enrolled;
       }
-      setEnrollmentStatuses(statuses);
+      setEnrollmentStatuses(courseStatuses);
+
+      const projectStatuses = {};
+      for (const project of studentProjects) {
+        const response = await axios.get(`http://localhost:8000/api/projects/${project.id}/`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        projectStatuses[project.id] = response.data.is_enrolled;
+      }
+      setProjectEnrollmentStatuses(projectStatuses);
     } catch (error) {
       console.error('Error checking enrollment status:', error);
       setError('Failed to check enrollment status');
@@ -111,119 +125,91 @@ useEffect(() => {
   };
 
   checkEnrollments();
-}, [studentCourses]);
+}, [studentCourses, studentProjects]);
 
 
-  const toggleCourseDetails = (courseId) => {
-    setSelectedCourseId(selectedCourseId === courseId ? null : courseId);
-  };
-
-  const handleSubheadingChange = (index, event) => {
-    const newSubheadings = subheadings.slice();
-    newSubheadings[index][event.target.name] = event.target.value;
-    setSubheadings(newSubheadings);
-  };
-
-  const handleAddSubheading = () => {
-    setSubheadings([...subheadings, { title: '' }]);
-  };
-
-  const handleRemoveSubheading = (index) => {
-    const newSubheadings = subheadings.slice();
-    newSubheadings.splice(index, 1);
-    setSubheadings(newSubheadings);
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    const courseData = {
-      title,
-      description,
-      subheadings,
-    };
-
+useEffect(() => {
+  const fetchData = async () => {
     try {
       const authTokens = localStorage.getItem('authTokens'); 
       const tokens = JSON.parse(authTokens);
       const token = tokens.access;
-      const response = await axios.post('http://localhost:8000/api/courses/', courseData, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-      });
-      setMessage('Course created successfully!');
-      setTitle('');
-      setDescription('');
-      setSubheadings([{ title: '' }]);
-    } catch (error) {
-      console.error('Error creating course:', error);
-      setMessage('Failed to create course.');
-    }
-  };
 
-  const checkEnrollment = async (id) => {
-    try {
-      const authTokens = localStorage.getItem('authTokens');
-      const tokens = JSON.parse(authTokens);
-      const token = tokens.access;
-
-      const response = await axios.get(`http://localhost:8000/api/courses/${id}/`, {
-        headers: { 'Authorization': `Bearer ${token}` },
+      // Fetch profile
+      const profileResponse = await fetch('http://localhost:8000/api/profile/', {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${token}` }
       });
 
-      return response.data.is_enrolled;
+      if (profileResponse.ok) {
+        const profileData = await profileResponse.json();
+        setProfile(profileData);
+        setLoading(false);
 
+        // Fetch projects
+        const projectsResponse = await axios.get('http://localhost:8000/api/projects/', {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+
+        console.log("Projects Data:", projectsResponse.data); // Check the structure of the projects data
+
+        const filteredProjects = projectsResponse.data.filter(project => project.teacher_name === profileData.profile_username);
+        setStudentProjects(projectsResponse.data);
+        setProjects(filteredProjects);
+
+        // Fetch courses
+        const coursesResponse = await axios.get('http://localhost:8000/api/courses/', {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+
+        const filteredCourses = coursesResponse.data.filter(course => course.teacher_name === profileData.profile_username);
+        setStudentCourses(coursesResponse.data);
+        setCourses(filteredCourses);
+
+        console.log("Course Data:", coursesResponse.data);
+
+        
+        // setProjects(filteredProjects);
+      } else {
+        console.error('Failed to fetch profile');
+        setLoading(false);
+      }
     } catch (error) {
-      console.error('Error checking enrollment status:', error);
-      setError('Failed to check enrollment status');
+      console.error('Error fetching data:', error);
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const authTokens = localStorage.getItem('authTokens'); 
-        const tokens = JSON.parse(authTokens);
-        const token = tokens.access;
-  
-        // Fetch profile
-        const profileResponse = await fetch('http://localhost:8000/api/profile/', {
-          method: 'GET',
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-  
-        if (profileResponse.ok) {
-          const profileData = await profileResponse.json();
-          setProfile(profileData);
-          setLoading(false);
-  
-          // Fetch courses
-          const coursesResponse = await axios.get('http://localhost:8000/api/courses/', {
-            headers: { 'Authorization': `Bearer ${token}`},
-          });
-  
-          const filteredCourses = coursesResponse.data.filter(course => course.teacher_name === profileData.profile_username);
-          setStudentCourses(coursesResponse.data);
-          setCourses(filteredCourses);
-        } else {
-          console.error('Failed to fetch profile');
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-  
-    fetchData();
-  }, []);
+  fetchData();
+}, []);
+
+useEffect(() => {
+  const fetchProjects = async () => {
+    try {
+      const authTokens = localStorage.getItem('authTokens'); 
+      const tokens = JSON.parse(authTokens);
+      const token = tokens.access;
+
+      const response = await axios.get('http://localhost:8000/api/projects/', {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+
+      console.log("Projects Data:", response.data); // Check the structure of the projects data
+
+      setProjects(response.data);
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+    }
+  };
+
+  fetchProjects();
+}, []);
 
   
 
   const handleOpenNewTab = () => {
-      const newTabUrl = `${window.location.origin}/streaming/${profile.profile_username}/${profile.profile_username}/${profile.full_name}`;
+    // const newTabUrl = `${window.location.origin}/streaming/${profile.profile_username}/${profile.profile_username}/${profile.full_name}`;
+      const newTabUrl = `${window.location.origin}/liveapp`;
       window.open(newTabUrl, '_blank'); // Open in a new tab
   };
   
@@ -242,88 +228,12 @@ useEffect(() => {
       {profile.role === 'teacher' ? (
         <>
         <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-1 xl:grid-cols-1">
-        {/* <Button 
-          color="lightBlue" 
-          size="lg" 
-          ripple="light" 
-          onClick={() => navigate(`/stream/${profile.profile_username}/${profile.profile_username}/${profile.full_name}`)}> 
-            Create Live Stream 
-        </Button> */}
 
         <Button onClick={handleOpenNewTab}>Start Streaming</Button>
 
         <CourseUploadForm />
-    
-        {/* <form onSubmit={handleSubmit}>
-  
-        <Card>
-          <CardHeader
-            color="transparent"
-            floated={false}
-            shadow={false}
-            className="m-0 p-4"
-          >
-            <Typography variant="h5" color="blue-gray">
-              Create Course
-            </Typography>
-          </CardHeader>
-          <CardBody className="flex flex-col gap-4 p-4">
-          
-            
-            <Input
-            label="Title"
-            type="text"
-            name="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required>
-            </Input>
-            <Textarea
-            label="description"
-             name="description"
-             value={description}
-             onChange={(e) => setDescription(e.target.value)}
-             required>
-  
-            </Textarea>
-  
-            <Typography variant="h6" color="blue-gray">
-              Subheadings
-            </Typography>
-  
-            {subheadings.map((subheading, index) => (
-              <div key={index}>
-                <Input
-                label="Subheading Title"
-                type="text"
-                name="title"
-                value={subheading.title}
-                onChange={(e) => handleSubheadingChange(index, e)}
-                required>
-                </Input>
-                <br />
-                <Button
-                type="button" onClick={() => handleRemoveSubheading(index)}>
-                  Remove
-                </Button>
-                
-              </div>
-            ))}
-  
-            <Button type="button" onClick={handleAddSubheading}>
-              Add Subheading
-            </Button>
-  
-            
-            <br />
-            <Button type="submit" >
-               Create Course
-            </Button>
-          
-          </CardBody>
-        </Card>
-  
-        </form> */}
+
+        <ProjectUploadForm/>
           
         </div>
         <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-1 xl:grid-cols-2">
@@ -333,7 +243,6 @@ useEffect(() => {
           <StatisticsCard
             key={course.id}
             value={course.title}  
-            // {...rest}
             title={course.description.length > 50 ? course.description.substring(0, 50) + "..." : course.description}
             icon={<img src={course.images[0].image} className="w-12 h-12"></img>}
             footer={
@@ -346,6 +255,44 @@ useEffect(() => {
           <Button onClick={() => navigate(`/course/${course.id}`)}>See course</Button>
           </>
         ))}
+
+      <div className="mb-4 grid grid-cols-1 gap-6 xl:grid-cols-3">
+            {projects.map((project) => (
+        <Card key={project.id} className="mb-4 border border-blue-gray-100 shadow-sm">
+          <CardHeader floated={false} className="flex items-center p-4">
+            {project.images && (
+              <img
+                src={project.images[0].image}
+                className="w-12 h-12 mr-4"
+                alt="Project image"
+              />
+            )}
+            <div>
+              <Typography variant="h6" color="blue-gray" className="font-bold">
+                {project.title}
+              </Typography>
+              <Typography variant="small" className="text-blue-gray-600">
+                {project.description.length > 50
+                  ? project.description.substring(0, 50) + "..."
+                  : project.description}
+              </Typography>
+            </div>
+          </CardHeader>
+
+          <CardBody>
+            <Typography className="text-sm text-blue-gray-600">
+              <strong>{project.teacher_name}</strong>
+            </Typography>
+          </CardBody>
+
+
+            <Button onClick={() => navigate(`/project/${project.id}`)}>
+              See project
+            </Button>
+
+        </Card>
+      ))}
+            </div>
       </div> 
       </>
 
@@ -368,174 +315,81 @@ useEffect(() => {
             </>
           )
         ))}
+
+        {studentProjects.map((project) => (
+          projectEnrollmentStatuses[project.id] && (
+            <Card key={project.id} className="mb-4 border border-blue-gray-100 shadow-sm">
+              <CardHeader floated={false} className="flex items-center p-4">
+                {project.images && (
+                  <img
+                    src={project.images[0].image}
+                    className="w-12 h-12 mr-4"
+                    alt="Project image"
+                  />
+                )}
+                <div>
+                  <Typography variant="h6" color="blue-gray" className="font-bold">
+                    {project.title}
+                  </Typography>
+                  <Typography variant="small" className="text-blue-gray-600">
+                    {project.description.length > 50
+                      ? project.description.substring(0, 50) + "..."
+                      : project.description}
+                  </Typography>
+                </div>
+              </CardHeader>
+
+              <CardBody>
+                <Typography className="text-sm text-blue-gray-600">
+                  <strong>{project.teacher_name}</strong>
+                </Typography>
+              </CardBody>
+
+              <Button onClick={() => navigate(`/project/${project.id}`)}>
+                See project
+              </Button>
+            </Card>
+          )
+        ))}
       </div> }
 
-        
-    
-        
-      {/* <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-1 xl:grid-cols-2">
-      
-        {courses.map((course) => (
-          <StatisticsCard
-            key={course.id}
-            value={course.title}  
-            // {...rest}
-            title={course.description}
-            icon={<img src={course.images[0].image} className="w-12 h-12"></img>}
-            footer={
-              <Typography className="font-normal text-blue-gray-600">
-                <strong className="gray">{course.teacher_name}</strong>
-                &nbsp;
-              </Typography>
-            }
-          />
-        ))}
-      </div>  */}
-      {/* <div className="mb-6 grid grid-cols-1 gap-y-12 gap-x-6 md:grid-cols-2 xl:grid-cols-3">
-        {statisticsChartsData.map((props) => (
-          <StatisticsChart
-            key={props.title}
-            {...props}
-            footer={
-              <Typography
-                variant="small"
-                className="flex items-center font-normal text-blue-gray-600"
-              >
-                <ClockIcon strokeWidth={2} className="h-4 w-4 text-blue-gray-400" />
-                &nbsp;{props.footer}
-              </Typography>
-            }
-          />
-        ))}
-      </div> */}
       <div className="mb-4 grid grid-cols-1 gap-6 xl:grid-cols-3">
-        <Card className="overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm">
-          <CardHeader
-            floated={false}
-            shadow={false}
-            color="transparent"
-            className="m-0 flex items-center justify-between p-6"
-          >
-            <div>
-              <Typography variant="h6" color="blue-gray" className="mb-1">
-                Projects
-              </Typography>
-              <Typography
-                variant="small"
-                className="flex items-center gap-1 font-normal text-blue-gray-600"
-              >
-                <CheckCircleIcon strokeWidth={3} className="h-4 w-4 text-blue-gray-200" />
-                <strong>3 done</strong> this month
-              </Typography>
-            </div>
-            <Menu placement="left-start">
-              <MenuHandler>
-                <IconButton size="sm" variant="text" color="blue-gray">
-                  <EllipsisVerticalIcon
-                    strokeWidth={3}
-                    fill="currenColor"
-                    className="h-6 w-6"
-                  />
-                </IconButton>
-              </MenuHandler>
-              <MenuList>
-                <MenuItem>Action</MenuItem>
-                <MenuItem>Another Action</MenuItem>
-                <MenuItem>Something else here</MenuItem>
-              </MenuList>
-            </Menu>
-          </CardHeader>
-          <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
-            <table className="w-full min-w-[640px] table-auto">
-              <thead>
-                <tr>
-                  {["name", "contributors", "technologies", "completion"].map(
-                    (el) => (
-                      <th
-                        key={el}
-                        className="border-b border-blue-gray-50 py-3 px-6 text-left"
-                      >
-                        <Typography
-                          variant="small"
-                          className="text-[11px] font-medium uppercase text-blue-gray-400"
-                        >
-                          {el}
-                        </Typography>
-                      </th>
-                    )
-                  )}
-                </tr>
-              </thead>
-              <tbody>
-                {projectsTableData.map(
-                  ({ img, name, members, budget, completion }, key) => {
-                    const className = `py-3 px-5 ${
-                      key === projectsTableData.length - 1
-                        ? ""
-                        : "border-b border-blue-gray-50"
-                    }`;
+      {projects.map((project) => (
+  <Card key={project.id} className="mb-4 border border-blue-gray-100 shadow-sm">
+    <CardHeader floated={false} className="flex items-center p-4">
+      {project.images && (
+        <img
+          src={project.images[0].image}
+          className="w-12 h-12 mr-4"
+          alt="Project image"
+        />
+      )}
+      <div>
+        <Typography variant="h6" color="blue-gray" className="font-bold">
+          {project.title}
+        </Typography>
+        <Typography variant="small" className="text-blue-gray-600">
+          {project.description.length > 50
+            ? project.description.substring(0, 50) + "..."
+            : project.description}
+        </Typography>
+      </div>
+    </CardHeader>
 
-                    return (
-                      <tr key={name}>
-                        <td className={className}>
-                          <div className="flex items-center gap-4">
-                            <Avatar src={img} alt={name} size="sm" />
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-bold"
-                            >
-                              {name}
-                            </Typography>
-                          </div>
-                        </td>
-                        <td className={className}>
-                          {members.map(({ img, name }, key) => (
-                            <Tooltip key={name} content={name}>
-                              <Avatar
-                                src={img}
-                                alt={name}
-                                size="xs"
-                                variant="circular"
-                                className={`cursor-pointer border-2 border-white ${
-                                  key === 0 ? "" : "-ml-2.5"
-                                }`}
-                              />
-                            </Tooltip>
-                          ))}
-                        </td>
-                        <td className={className}>
-                          <Typography
-                            variant="small"
-                            className="text-xs font-medium text-blue-gray-600"
-                          >
-                            {budget}
-                          </Typography>
-                        </td>
-                        <td className={className}>
-                          <div className="w-10/12">
-                            <Typography
-                              variant="small"
-                              className="mb-1 block text-xs font-medium text-blue-gray-600"
-                            >
-                              {completion}%
-                            </Typography>
-                            <Progress
-                              value={completion}
-                              variant="gradient"
-                              color={completion === 100 ? "green" : "blue"}
-                              className="h-1"
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  }
-                )}
-              </tbody>
-            </table>
-          </CardBody>
-        </Card>
+    <CardBody>
+      <Typography className="text-sm text-blue-gray-600">
+        <strong>{project.teacher_name}</strong>
+      </Typography>
+    </CardBody>
+
+
+      <Button onClick={() => navigate(`/project/${project.id}`)}>
+        See project
+      </Button>
+
+  </Card>
+))}
+      </div>
         <Card className="border border-blue-gray-100 shadow-sm">
       <CardHeader
         floated={false}
@@ -569,7 +423,7 @@ useEffect(() => {
         </div>
       </CardBody>
     </Card>
-      </div>
+
     </div>
     </>
   );

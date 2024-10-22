@@ -1,41 +1,10 @@
 import React from "react";
 import { Container, Row, Col } from "reactstrap";
-import courseImg1 from "../images/web-design.png";
-import courseImg2 from "../images/graphics-design.png";
-import courseImg3 from "../images/ui-ux.png";
 import "./courses.css";
 import CourseCard from "./CourseCard";
 import axios from "axios";
 import { useState, useEffect } from "react";
 
-const coursesData = [
-  {
-    id: "01",
-    title: "Web Design BootCamp-2022 for Beginners",
-    lesson: 12,
-    students: 12.5,
-    rating: 5.9,
-    imgUrl: courseImg1,
-  },
-
-  {
-    id: "02",
-    title: "Professional Graphics Design, PhotoShop, Figma",
-    lesson: 12,
-    students: 12.5,
-    rating: 5.9,
-    imgUrl: courseImg2,
-  },
-
-  {
-    id: "03",
-    title: "UI/UX BootCamp for Beginners in 2022",
-    lesson: 12,
-    students: 12.5,
-    rating: 5.9,
-    imgUrl: courseImg3,
-  },
-];
 
 const headingStyles = {
   fontSize: '2rem',
@@ -85,7 +54,7 @@ const Courses = () => {
     <section  style={{ marginTop: '100px' }} >
       <Container>
         <Row>
-          <Col lg="12" className="mb-5">
+          {courses.length > 0 && <Col lg="12" className="mb-5">
             <div className="course__top d-flex justify-content-between align-items-center">
               <div className="course__top__left w-50">                
                 <h2 style={headingStyles} >Recommended for You</h2>
@@ -96,16 +65,16 @@ const Courses = () => {
                 </p>
               </div>
 
-              <div className="w-50 text-end">
+              {/* <div className="w-50 text-end">
                 <button style={buttonStyle}>See All</button>
-              </div>
+              </div> */}
             </div>
-          </Col>
-          {courses.filter(item => !item.is_enrolled).map((item) => (
-            <Col lg="4" md="6" sm="6" key={item.id}> 
-              <CourseCard item={item} />
-            </Col>
-          ))} 
+          </Col>}
+          <div className="courses-container" style={{display: 'grid',gridTemplateColumns: 'repeat(3, 1fr)', /* 3 columns */gap: '20px'}}>
+            {courses.map((item) => (
+              <CourseCard key={item.id} item={item} style= {{padding: '20px',}}/>
+            ))}
+          </div>
         </Row>
       </Container>
     </section>

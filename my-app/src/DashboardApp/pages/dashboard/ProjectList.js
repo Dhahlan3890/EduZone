@@ -1,12 +1,3 @@
-<<<<<<< Updated upstream
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
-import { Card, CardHeader, CardBody, Typography } from '@material-tailwind/react';
-
-const ProjectList = () => {
-  const [projects, setProjects] = useState([]);
-=======
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
@@ -31,7 +22,6 @@ import { StatisticsCard } from "../../widgets/cards/index";
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
->>>>>>> Stashed changes
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -41,11 +31,7 @@ const ProjectList = () => {
       try {
         const response = await axios.get('http://localhost:8000/api/projects/', {
           headers: {
-<<<<<<< Updated upstream
-            Authorization: `Bearer ${token}`,
-=======
             'Authorization': `Bearer ${token}`,
->>>>>>> Stashed changes
           },
         });
         setProjects(response.data);
@@ -57,24 +43,6 @@ const ProjectList = () => {
     fetchProjects();
   }, []);
 
-<<<<<<< Updated upstream
-  return (
-    <div>
-      <Typography variant="h5" color="blue-gray" className="mb-4">
-        Projects
-      </Typography>
-      {projects.map((project) => (
-        <Card key={project.id} className="mb-4">
-          <CardHeader>
-            <Typography variant="h6">{project.title}</Typography>
-          </CardHeader>
-          <CardBody>
-            <Typography>{project.description}</Typography>
-            <Link to={`/projects/${project.id}`}>View Project</Link>
-          </CardBody>
-        </Card>
-      ))}
-=======
   const toggleProjectDetails = (projectId) => {
     setSelectedProjectId(selectedProjectId === projectId ? null : projectId);
   };
@@ -151,7 +119,6 @@ const ProjectList = () => {
           )}
         </div>
       ))} */}
->>>>>>> Stashed changes
     </div>
   );
 };

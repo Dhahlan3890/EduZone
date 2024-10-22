@@ -25,22 +25,13 @@ import {
   PowerIcon,
 } from "@heroicons/react/24/outline";
 import {
-  Bars4Icon,
-  GlobeAmericasIcon,
-  NewspaperIcon,
-  PhoneIcon,
   RectangleGroupIcon,
-  SquaresPlusIcon,
-  SunIcon,
-  TagIcon,
-  UserGroupIcon,
+
 } from "@heroicons/react/24/solid";
 import {useNavigate } from "react-router-dom";
 import logo from './assets/logo.jpeg'
-import { Input } from "@material-tailwind/react";
 import AuthService from '../authService';
 import AuthContext from "../context/AuthContext";
-import SearchBarWithSuggestions from "./SearchBar";
 
 
 const profileMenuItems = [
@@ -150,67 +141,18 @@ function ProfileMenu({profileImg}) {
   );
 }
 
-
- 
-const navListMenuItems = [
-  {
-    title: "Courses",
-    description: "Discover a wide range of courses to enhance your skills.",
-    icon: RectangleGroupIcon,
-  },
-  {
-    title: "About Us",
-    description: "Learn more about our mission and values.",
-    icon: UserGroupIcon,
-  },
-  {
-    title: "Blog",
-    description: "Read articles and insights from industry experts.",
-    icon: Bars4Icon,
-  },
-  {
-    title: "Tutoring",
-    description: "Get personalized help from our experienced tutors.",
-    icon: SunIcon,
-  },
-  {
-    title: "Support",
-    description: "Reach out to us for any assistance or inquiries.",
-    icon: GlobeAmericasIcon,
-  },
-  {
-    title: "Contact",
-    description: "Get in touch with us for more information.",
-    icon: PhoneIcon,
-  },
-  {
-    title: "News",
-    description: "Stay updated with the latest news and events.",
-    icon: NewspaperIcon,
-  },
-  {
-    title: "Library",
-    description: "Access a vast collection of educational resources.",
-    icon: SquaresPlusIcon,
-  },
-  {
-    title: "Special Offers",
-    description: "Explore our latest discounts and deals.",
-    icon: TagIcon,
-  },
-];
-
  
 function NavListMenu() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
-  const renderItems = navListMenuItems.map(
-    ({ icon, title, description }, key) => (
-      <a href="#" key={key}>
+  const navigate = useNavigate();
+  const renderItems = (
+    <>
+      <div onClick={() => navigate("/dashboard/home")}>
         <MenuItem className="flex items-center gap-3 rounded-lg">
-          <div className="flex items-center justify-center rounded-lg !bg-blue-gray-50 p-2 ">
+          <div className="flex items-center justify-center rounded-lg !bg-blue-gray-50 p-2 " >
             {" "}
-            {React.createElement(icon, {
+            {React.createElement(RectangleGroupIcon, {
               strokeWidth: 2,
               className: "h-6 text-gray-900 w-6",
             })}
@@ -220,21 +162,78 @@ function NavListMenu() {
               variant="h6"
               color="blue-gray"
               className="flex items-center text-sm font-bold"
+              
             >
-              {title}
+              Courses
             </Typography>
             <Typography
               variant="paragraph"
               className="text-xs !font-medium text-blue-gray-500"
+              
             >
-              {description}
+              Discover a wide range of courses to enhance your skills.
             </Typography>
           </div>
         </MenuItem>
-      </a>
-    ),
+      </div>
+      <div onClick={() => navigate("/dashboard/home")}>
+        <MenuItem className="flex items-center gap-3 rounded-lg">
+          <div className="flex items-center justify-center rounded-lg !bg-blue-gray-50 p-2 " >
+            {" "}
+            {React.createElement(RectangleGroupIcon, {
+              strokeWidth: 2,
+              className: "h-6 text-gray-900 w-6",
+            })}
+          </div>
+          <div>
+            <Typography
+              variant="h6"
+              color="blue-gray"
+              className="flex items-center text-sm font-bold"
+              
+            >
+              Projects
+            </Typography>
+            <Typography
+              variant="paragraph"
+              className="text-xs !font-medium text-blue-gray-500"
+              
+            >
+              Explore projects that showcase your skills and achievements.
+            </Typography>
+          </div>
+        </MenuItem>
+      </div>
+      <div onClick={() => navigate("/dashboard/tables")}>
+        <MenuItem className="flex items-center gap-3 rounded-lg">
+          <div className="flex items-center justify-center rounded-lg !bg-blue-gray-50 p-2 " >
+            {" "}
+            {React.createElement(RectangleGroupIcon, {
+              strokeWidth: 2,
+              className: "h-6 text-gray-900 w-6",
+            })}
+          </div>
+          <div>
+            <Typography
+              variant="h6"
+              color="blue-gray"
+              className="flex items-center text-sm font-bold"
+              
+            >
+              Teachers
+            </Typography>
+            <Typography
+              variant="paragraph"
+              className="text-xs !font-medium text-blue-gray-500"
+              
+            >
+              Access resources and tools tailored for educators.
+            </Typography>
+          </div>
+        </MenuItem>
+      </div>
+      </>
   );
- 
   return (
     <React.Fragment>
       <Menu

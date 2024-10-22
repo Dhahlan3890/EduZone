@@ -19,8 +19,8 @@ const StreamingApp = () => {
         const userID = userid;
         const userName = username;
 
-        const appID = 2014858652;
-        const serverSecret = "d0c3fda75bfbce69d969e14bf285d0aa";
+        const appID = 558012474;
+        const serverSecret = "091bc864d80f6e124da83ef93c843890";
         const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, roomID, userID, userName);
 
         const zp = ZegoUIKitPrebuilt.create(kitToken);
@@ -49,7 +49,7 @@ const StreamingApp = () => {
 
     return (
         <div id="root" style={{ width: '100vw', height: '100vh' }}></div>
-        
+
     );
 };
 
