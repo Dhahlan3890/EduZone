@@ -101,11 +101,11 @@ const Courses = () => {
               </div>
             </div>
           </Col>
-          {courses.map((item) => (
-            <Col lg="4" md="6" sm="6">
-              <CourseCard key={item.id} item={item} />
-            </Col>
-          ))}
+          <div className="courses-container" style={{display: 'grid',gridTemplateColumns: 'repeat(3, 1fr)', /* 3 columns */gap: '20px'}}>
+            {courses.map((item) => (
+              <CourseCard key={item.id} item={item} style= {{padding: '20px',}}/>
+            ))}
+          </div>
         </Row>
       </Container>
     </section>
