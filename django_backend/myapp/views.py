@@ -150,12 +150,21 @@ class ProfileListView(generics.ListAPIView):
 
 
 from rest_framework import generics, permissions
-from .models import Course, Enrollment, SubtitleVideo, SubtitleFile, Subtitle
-from .serializers import CourseSerializer, EnrollmentSerializer, SubtitleFileSerializer, SubtitleSerializer, SubtitleVideoSerializer
+from .models import Course, Enrollment, SubtitleVideo, SubtitleFile, Subtitle, Project, ProjectImage, ProjectSubtitle, ProjectSubtitleFile, ProjectSubtitleVideo, ProjectEnrollment
+from .serializers import CourseSerializer, EnrollmentSerializer, SubtitleFileSerializer, SubtitleSerializer, SubtitleVideoSerializer, ProjectImageSerializer, ProjectSerializer, ProjectSubtitleFileSerializer, ProjectSubtitleSerializer, ProjectSubtitleVideoSerializer, ProjectEnrollmentSerializer
 
 class EnrollmentListCreateView(generics.ListCreateAPIView):
     queryset = Enrollment.objects.all()
     serializer_class = EnrollmentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(student=self.request.user.profile)
+
+
+class ProjectEnrollmentListCreateView(generics.ListCreateAPIView):
+    queryset = ProjectEnrollment.objects.all()
+    serializer_class = ProjectEnrollmentSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
@@ -250,3 +259,73 @@ class CourseViewSet(viewsets.ModelViewSet):
         # Create a new enrollment
         Enrollment.objects.create(course=course, student=student)
         return Response({"detail": "Successfully enrolled in the course."}, status=status.HTTP_201_CREATED)
+
+
+class ProjectViewSet(viewsets.ModelViewSet):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+    permission_classes = [IsAuthenticated]
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        data = serializer.data
+        
+        # Include images
+        data['images'] = ProjectImageSerializer(instance.projectimages.all(), many=True).data
+        
+        # Include subtitles with their files and videos
+        subtitles = instance.projectsubtitles.all()
+        subtitle_data = []
+        for subtitle in subtitles:
+            subtitle_serializer = ProjectSubtitleSerializer(subtitle)
+            subtitle_info = subtitle_serializer.data
+            subtitle_info['files'] = ProjectSubtitleFileSerializer(subtitle.projectfiles.all(), many=True).data
+            subtitle_info['videos'] = ProjectSubtitleVideoSerializer(subtitle.projectvideos.all(), many=True).data
+            subtitle_data.append(subtitle_info)
+        
+        data['subtitles'] = subtitle_data
+        
+        return Response(data)
+
+    def perform_create(self, serializer):
+        if not self.request.user.is_authenticated:
+            raise serializer.ValidationError("User must be logged in to create a project.")
+        project = serializer.save(teacher=self.request.user)
+        
+        # Handle images
+        images = self.request.FILES.getlist('images')
+        for image in images:
+            ProjectImage.objects.create(project=project, image=image)
+
+        # Handle subtitles
+        i = 0
+        while f'subtitles[{i}][title]' in self.request.data:
+            subtitle_title = self.request.data.get(f'subtitles[{i}][title]')
+            subtitle_description = self.request.data.get(f'subtitles[{i}][description]')
+            subtitle = ProjectSubtitle.objects.create(project=project, title=subtitle_title, description=subtitle_description)
+
+            # Handle subtitle files
+            files = self.request.FILES.getlist(f'subtitles[{i}][files]')
+            for file in files:
+                ProjectSubtitleFile.objects.create(subtitle=subtitle, file=file)
+
+            # Handle subtitle videos
+            videos = self.request.FILES.getlist(f'subtitles[{i}][videos]')
+            for video in videos:
+                ProjectSubtitleVideo.objects.create(subtitle=subtitle, video=video)
+
+            i += 1
+
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    def enroll(self, request, pk=None):
+        project = self.get_object()
+        student = request.user.profile
+
+        # Check if the student is already enrolled in the project
+        if ProjectEnrollment.objects.filter(project=project, student=student).exists():
+            return Response({"detail": "You are already enrolled in this project."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create a new enrollment
+        ProjectEnrollment.objects.create(project=project, student=student)
+        return Response({"detail": "Successfully enrolled in the project."}, status=status.HTTP_201_CREATED)

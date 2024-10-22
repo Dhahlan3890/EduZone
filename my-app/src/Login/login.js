@@ -58,55 +58,46 @@ function Login() {
   // const handleGoogleLoginFailure = (error) => {
   //   console.log('Google login failure:', error);
   //   setMessage('Google login failed. Please try again.');
+
+
+  
   // };
 
   return (
     // <GoogleOAuthProvider clientId="762258283337-qg5rlsln6kjmmj0r74nt10qbro8kj0rg.apps.googleusercontent.com">
-      <form action="#" className="mx-auto max-w-[24rem] text-left" onSubmit={handleSubmit} id="card">
-        <Card className="w-96">
+    <Card className="w-full h-full flex flex-col md:flex-row">
+        <CardHeader
+          shadow={false}
+          floated={false}
+          className="m-0 w-full md:w-3/5 shrink-0 rounded-b-none md:rounded-r-none"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80"
+            alt="card-image"
+            className="h-48 md:h-full w-full object-cover"
+          />
+        </CardHeader>
+        <CardBody className="w-full md:w-2/5">
+      <form action="#" className="mx-auto text-left mt-4 md:mt-20" onSubmit={handleSubmit} id="card">
+        <Card className="w-full max-w-md">
           <CardHeader
             variant="gradient"
             color="gray"
-            className="mb-4 grid h-28 place-items-center"
+            className="mb-4 grid h-20 md:h-28 place-items-center"
           >
             <Typography variant="h3" color="white">
               Sign In
             </Typography>
           </CardHeader>
-          <CardBody className="flex flex-col gap-4">
+          <CardBody className="flex flex-col gap-4 px-4 md:px-6">
             <Input label="Email" size="lg" type="email" name="email"/>
             <Input label="Password" size="lg" type="password" name="password" />
-            {/* <div className="-ml-2.5">
-              <Checkbox label="Remember Me" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
-            </div> */}
           </CardBody>
-          <CardFooter className="pt-0 flex flex-col gap-4">
-            {/* {message && <Message message={message} />} */}
-            {/* <GoogleLogin
-              onSuccess={handleGoogleLoginSuccess}
-              onFailure={handleGoogleLoginFailure}
-              render={(renderProps) => (
-                <Button
-                  variant="outlined"
-                  size="lg"
-                  className="mt-6 flex h-12 items-center justify-center gap-2"
-                  fullWidth
-                  onClick={renderProps.onClick}
-                  disabled={renderProps.disabled}
-                >
-                  <img
-                    src={`https://www.material-tailwind.com/logos/logo-google.png`}
-                    alt="google"
-                    className="h-6 w-6"
-                  />{" "}
-                  Sign in with Google
-                </Button>
-              )}
-            /> */}
+          <CardFooter className="pt-0 flex flex-col gap-4 px-4 md:px-6">
             <Button variant="gradient" fullWidth type="submit">
               Sign In
             </Button>
-            <Typography variant="small" className="mt-6 flex justify-center">
+            <Typography variant="small" className="mt-4 md:mt-6 flex justify-center">
               Don&apos;t have an account?
               <Typography
                 as="a"
@@ -122,6 +113,8 @@ function Login() {
           </CardFooter>
         </Card>
       </form>
+      </CardBody>
+    </Card>
     // </GoogleOAuthProvider>
   );
 }

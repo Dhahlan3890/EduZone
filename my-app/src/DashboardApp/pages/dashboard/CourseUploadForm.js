@@ -200,6 +200,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Card, CardHeader, CardBody, Typography, Input, Textarea, Button, IconButton } from '@material-tailwind/react';
 // import { PlusIcon, TrashIcon } from '@heroicons/react/solid';
+const swal = require('sweetalert2')
 
 const CourseUploadForm = () => {
   const [title, setTitle] = useState('');
@@ -265,9 +266,27 @@ const CourseUploadForm = () => {
       });
       console.log('Course uploaded:', response.data);
       setUploadStatus('Upload successful!');
+      swal.fire({
+        title: "Course Upload successful!",
+        icon: "success",
+        toast: true,
+        timer: 2000,
+        position: 'top-right',
+        timerProgressBar: true,
+        showConfirmButton: false
+    })
     } catch (error) {
       console.error(error);
       setUploadStatus('Error uploading course.');
+      swal.fire({
+        title: "Error uploading course.",
+        icon: "error",
+        toast: true,
+        timer: 2000,
+        position: 'top-right',
+        timerProgressBar: true,
+        showConfirmButton: false
+    })
     } finally {
       setLoading(false);
     }

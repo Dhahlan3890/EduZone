@@ -6,7 +6,7 @@ from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from .models import Profile, Course, Enrollment, Profile_img
-from .models import Notification, Course, CourseImage, Subtitle, SubtitleFile, SubtitleVideo
+from .models import Notification, Course, CourseImage, Subtitle, SubtitleFile, SubtitleVideo, ProjectSubtitle, ProjectSubtitleFile, ProjectImage, ProjectSubtitleVideo, Project, ProjectEnrollment
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -139,16 +139,62 @@ class CourseSerializer(serializers.ModelSerializer):
             return Enrollment.objects.filter(course=obj, student=request.user.profile).exists()
         return False
 
+class ProjectSubtitleFileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectSubtitleFile
+        fields = ['id', 'file']
+
+class ProjectSubtitleVideoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectSubtitleVideo
+        fields = ['id', 'video']
+
+class ProjectSubtitleSerializer(serializers.ModelSerializer):
+    files = ProjectSubtitleFileSerializer(many=True, read_only=True, source='projectfiles')
+    videos = ProjectSubtitleVideoSerializer(many=True, read_only=True, source='projectvideos')
+
+    class Meta:
+        model = ProjectSubtitle
+        fields = ['id', 'title', 'description', 'files', 'videos']
+
+class ProjectImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectImage
+        fields = ['id', 'image']
+
+
+class ProjectSerializer(serializers.ModelSerializer):
+    teacher_name = serializers.CharField(source='teacher.username', read_only=True)
+    images = ProjectImageSerializer(many=True, read_only=True, source='projectimages')
+    subtitles = ProjectSubtitleSerializer(many=True, read_only=True, source='projectsubtitles')
+    is_enrolled = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Project
+        fields = ['id', 'title', 'description', 'created_at', 'teacher_name', 'is_enrolled', 'images', 'subtitles']
+
+    def get_is_enrolled(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return ProjectEnrollment.objects.filter(project=obj, student=request.user.profile).exists()
+        return False
+
 
 class EnrollmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Enrollment
         fields = ['id', 'course', 'student']
 
+class ProjectEnrollmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectEnrollment
+        fields = ['id', 'project', 'student']
 
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         fields = ['id', 'message', 'created_at']
+
+
 
 

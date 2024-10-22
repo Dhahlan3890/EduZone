@@ -41,6 +41,8 @@ const CourseCard = (props) => {
       });
 
       setIsEnrolled(true);
+      localStorage.setItem('enroll_status', localStorage.getItem('enroll_status') === "true" ? "false" : "true");
+      console.log(localStorage.getItem('enroll_status'))
     } catch (error) {
       console.error('Error enrolling in course:', error);
       setError('Failed to enroll in the course');
@@ -65,8 +67,8 @@ const CourseCard = (props) => {
 
   return (
     <>{!isEnrolled && <div className="single__course__item">
-      <div className="course__img">
-        <img src={images[0].image} alt="" className="w-100" />
+      <div className="course__img h-50">
+        <img src={images[0].image} alt="" className="w-100 h-100" />
       </div>
 
       <div className="course__details">
@@ -77,21 +79,12 @@ const CourseCard = (props) => {
             <i class="ri-book-open-line"></i> {description}
           </p>
 
-          
         </div>
         <p className="students d-flex align-items-center gap-1 mb-3">
             <i class="ri-user-line"></i> {teacher_name}
           </p>
 
-        {/* <div style={style}>
-          <p className="rating d-flex align-items-center gap-1">
-            <i class="ri-star-fill"></i> {}
-          </p>
 
-          <p className="enroll d-flex align-items-center gap-1">
-            <a href="#"> Enroll Now</a>
-          </p>
-        </div> */}
         <div>
           {isEnrolled ? (
           <Button>Continue</Button>
