@@ -11,6 +11,8 @@ import { AuthProvider } from './context/AuthContext';
 import RoleSelector from './Login/role';
 import StreamingApp from './DashboardApp/pages/dashboard/LiveStreaming';
 import { Courseplay } from './DashboardApp/pages/dashboard/Coursepage';
+import { Projectplay } from './DashboardApp/pages/dashboard/Projectpage';
+// import CheckoutForm from './HomePage/loggedin_page/Courses-section/paycard';
 
 function App() {
   const location = useLocation();
@@ -28,11 +30,13 @@ function App() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/role" element={<RoleSelector />} />
       <Route path="/course/:courseid" element={<Courseplay />} />
+      <Route path="/project/:projectid" element={<Projectplay />} />   
       <Route path="/dashboard/*" element={<PrivateRoute />}>
         <Route path="*" element={<Dashboard />} />
       </Route>
       <Route path="/streaming/:roomid/:userid/:username" element={<StreamingApp />} />
       <Route path="*" element={<Navigate to="/dashboard/home" replace />} />
+      {/* <Route path="/pay" element={<CheckoutForm />} /> */}
     </Routes>
     </AuthProvider>
     
