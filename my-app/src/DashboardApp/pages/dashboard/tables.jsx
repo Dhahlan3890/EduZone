@@ -75,7 +75,7 @@ export function Tables() {
         key: index.toString() // Add a unique key for each item
       }))
     : profiles.map((profile) => ({
-        img: profile.profile_img.profile_img,
+        img: (profile.profile_img && profile.profile_img.profile_img) || '/img/bruce-mars.jpeg',
         name: profile.profile_username,
         email: profile.profile_email,
         job: [profile.institute],
