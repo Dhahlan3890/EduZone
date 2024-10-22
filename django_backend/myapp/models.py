@@ -101,6 +101,50 @@ class CourseImage(models.Model):
 #     course = models.ForeignKey(Course, related_name='videos', on_delete=models.CASCADE)
 #     video = models.FileField(upload_to='courses/videos/')
 
+
+    
+
+class Notification(models.Model):
+    message = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.message
+
+class Project(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    teacher = models.ForeignKey(User, on_delete=models.CASCADE, related_name='projects')
+
+class ProjectImage(models.Model):
+    project = models.ForeignKey(Project, related_name='projectimages', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='projects/images/')
+
+class ProjectSubtitle(models.Model):
+    project = models.ForeignKey(Project, related_name='projectsubtitles', on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+
+class ProjectSubtitleFile(models.Model):
+    subtitle = models.ForeignKey(ProjectSubtitle, related_name='projectfiles', on_delete=models.CASCADE)
+    file = models.FileField(upload_to='projectsubtitles/files/')
+
+class ProjectSubtitleVideo(models.Model):
+    subtitle = models.ForeignKey(ProjectSubtitle, related_name='projectvideos', on_delete=models.CASCADE)
+    video = models.FileField(upload_to='projectsubtitles/videos/')
+
+class ProjectEnrollment(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='projectenrollments')
+    student = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='projectenrollments')
+
+    class Meta:
+        unique_together = ('project', 'student')
+
+    def __str__(self):
+        return f"{self.student.user.username} enrolled in {self.project.title}"
+
+
 class Enrollment(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='enrollments')
     student = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='enrollments')
@@ -110,11 +154,5 @@ class Enrollment(models.Model):
 
     def __str__(self):
         return f"{self.student.user.username} enrolled in {self.course.title}"
-    
 
-class Notification(models.Model):
-    message = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return self.message

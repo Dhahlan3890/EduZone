@@ -2,14 +2,15 @@
 
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
-from .views import MyTokenObtainPairView, RegisterView, protectedView, view_all_routes, ProfileDetailView,  EnrollmentListCreateView, ProfileListView, NotificationListCreateView, NotificationDetail
+from .views import MyTokenObtainPairView, RegisterView, protectedView, view_all_routes, ProfileDetailView,  EnrollmentListCreateView, ProfileListView, NotificationListCreateView, NotificationDetail, ProjectEnrollmentListCreateView
 
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import CourseViewSet
+from .views import CourseViewSet, ProjectViewSet
 
 router = DefaultRouter()
 router.register(r'courses', CourseViewSet)
+router.register(r'projects', ProjectViewSet)
 
 urlpatterns = [
     path('api/register/', RegisterView.as_view(), name='register'),
@@ -19,6 +20,7 @@ urlpatterns = [
     path('api/test/', protectedView, name="test"),
     path('api/', include(router.urls)),
     path('api/enrollments/', EnrollmentListCreateView.as_view(), name='enrollment_list_create'),
+    path('api/projectenrollments/', ProjectEnrollmentListCreateView.as_view(), name='project_enrollment_list_create'),
     path('api/profiles/', ProfileListView.as_view(), name='profile_list'),
     path('api/notifications/', NotificationListCreateView.as_view(), name='notification_list_create'),
     path('notifications/<int:pk>/', NotificationDetail.as_view(), name='notification-detail'),
