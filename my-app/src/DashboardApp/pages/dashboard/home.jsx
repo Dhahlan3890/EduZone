@@ -56,7 +56,6 @@ export function Home() {
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [enrollmentStatuses, setEnrollmentStatuses] = useState({});
-  const [projectEnrollmentStatuses, setProjectEnrollmentStatuses] = useState({});
   const navigate = useNavigate();
   const [isStreaming, setIsStreaming] = useState(false);
   const [input, setInput] = useState('');
@@ -100,23 +99,14 @@ useEffect(() => {
       const tokens = JSON.parse(authTokens);
       const token = tokens.access;
 
-      const courseStatuses = {};
+      const statuses = {};
       for (const course of studentCourses) {
         const response = await axios.get(`http://localhost:8000/api/courses/${course.id}/`, {
           headers: { 'Authorization': `Bearer ${token}` },
         });
-        courseStatuses[course.id] = response.data.is_enrolled;
+        statuses[course.id] = response.data.is_enrolled;
       }
-      setEnrollmentStatuses(courseStatuses);
-
-      const projectStatuses = {};
-      for (const project of studentProjects) {
-        const response = await axios.get(`http://localhost:8000/api/projects/${project.id}/`, {
-          headers: { 'Authorization': `Bearer ${token}` },
-        });
-        projectStatuses[project.id] = response.data.is_enrolled;
-      }
-      setProjectEnrollmentStatuses(projectStatuses);
+      setEnrollmentStatuses(statuses);
     } catch (error) {
       console.error('Error checking enrollment status:', error);
       setError('Failed to check enrollment status');
@@ -125,7 +115,7 @@ useEffect(() => {
   };
 
   checkEnrollments();
-}, [studentCourses, studentProjects]);
+}, [studentCourses]);
 
 
 useEffect(() => {
@@ -208,8 +198,7 @@ useEffect(() => {
   
 
   const handleOpenNewTab = () => {
-    // const newTabUrl = `${window.location.origin}/streaming/${profile.profile_username}/${profile.profile_username}/${profile.full_name}`;
-      const newTabUrl = `${window.location.origin}/liveapp`;
+      const newTabUrl = `${window.location.origin}/streaming/${profile.profile_username}/${profile.profile_username}/${profile.full_name}`;
       window.open(newTabUrl, '_blank'); // Open in a new tab
   };
   
@@ -256,43 +245,23 @@ useEffect(() => {
           </>
         ))}
 
-      <div className="mb-4 grid grid-cols-1 gap-6 xl:grid-cols-3">
-            {projects.map((project) => (
-        <Card key={project.id} className="mb-4 border border-blue-gray-100 shadow-sm">
-          <CardHeader floated={false} className="flex items-center p-4">
-            {project.images && (
-              <img
-                src={project.images[0].image}
-                className="w-12 h-12 mr-4"
-                alt="Project image"
-              />
-            )}
-            <div>
-              <Typography variant="h6" color="blue-gray" className="font-bold">
-                {project.title}
+        {/* {projects.map((project) => (
+          <>
+          <StatisticsCard
+            key={project.id}
+            value={project.title}  
+            title={project.description.length > 50 ? project.description.substring(0, 50) + "..." : project.description}
+            icon={project.images && <img src={project.images[0].image} className="w-12 h-12"></img>}
+            footer={
+              <Typography className="font-normal text-blue-gray-600">
+                <strong className="gray">{project.teacher_name}</strong>
+                &nbsp;
               </Typography>
-              <Typography variant="small" className="text-blue-gray-600">
-                {project.description.length > 50
-                  ? project.description.substring(0, 50) + "..."
-                  : project.description}
-              </Typography>
-            </div>
-          </CardHeader>
-
-          <CardBody>
-            <Typography className="text-sm text-blue-gray-600">
-              <strong>{project.teacher_name}</strong>
-            </Typography>
-          </CardBody>
-
-
-            <Button onClick={() => navigate(`/project/${project.id}`)}>
-              See project
-            </Button>
-
-        </Card>
-      ))}
-            </div>
+            }
+          />
+          <Button onClick={() => navigate(`/project/${project.id}`)}>See project</Button>
+          </>
+        ))} */}
       </div> 
       </>
 
@@ -316,41 +285,24 @@ useEffect(() => {
           )
         ))}
 
-        {studentProjects.map((project) => (
-          projectEnrollmentStatuses[project.id] && (
-            <Card key={project.id} className="mb-4 border border-blue-gray-100 shadow-sm">
-              <CardHeader floated={false} className="flex items-center p-4">
-                {project.images && (
-                  <img
-                    src={project.images[0].image}
-                    className="w-12 h-12 mr-4"
-                    alt="Project image"
-                  />
-                )}
-                <div>
-                  <Typography variant="h6" color="blue-gray" className="font-bold">
-                    {project.title}
-                  </Typography>
-                  <Typography variant="small" className="text-blue-gray-600">
-                    {project.description.length > 50
-                      ? project.description.substring(0, 50) + "..."
-                      : project.description}
-                  </Typography>
-                </div>
-              </CardHeader>
-
-              <CardBody>
-                <Typography className="text-sm text-blue-gray-600">
-                  <strong>{project.teacher_name}</strong>
+        {/* {studentProjects.map((project) => (
+          enrollmentStatuses[project.id] && (
+            <>
+            <StatisticsCard
+              key={project.id}
+              value={project.title}
+              title={project.description.length > 50 ? project.description.substring(0, 50) + "..." : project.description}
+              icon={<img src={project.images[0].image} className="w-12 h-12" alt="project" />}
+              footer={
+                <Typography className="font-normal text-blue-gray-600">
+                  <strong className="gray">{project.teacher_name}</strong>
                 </Typography>
-              </CardBody>
-
-              <Button onClick={() => navigate(`/project/${project.id}`)}>
-                See project
-              </Button>
-            </Card>
+              }
+            />
+            <Button onClick={() => navigate(`/project/${project.id}`)}>See project</Button>
+            </>
           )
-        ))}
+        ))} */}
       </div> }
 
       <div className="mb-4 grid grid-cols-1 gap-6 xl:grid-cols-3">
@@ -430,3 +382,4 @@ useEffect(() => {
 }
 
 export default {Home,StreamingApp };
+

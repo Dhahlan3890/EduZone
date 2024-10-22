@@ -12,8 +12,6 @@ import RoleSelector from './Login/role';
 import StreamingApp from './DashboardApp/pages/dashboard/LiveStreaming';
 import { Courseplay } from './DashboardApp/pages/dashboard/Coursepage';
 import { Projectplay } from './DashboardApp/pages/dashboard/Projectpage';
-import LiveApp from './LiveApp/App';
-import LiveAppStream from './LiveApp';
 // import CheckoutForm from './HomePage/loggedin_page/Courses-section/paycard';
 
 function App() {
@@ -38,7 +36,6 @@ function App() {
       </Route>
       <Route path="/streaming/:roomid/:userid/:username" element={<StreamingApp />} />
       <Route path="*" element={<Navigate to="/dashboard/home" replace />} />
-      <Route path="/liveapp" element={<LiveAppStream />} />
       {/* <Route path="/pay" element={<CheckoutForm />} /> */}
     </Routes>
     </AuthProvider>

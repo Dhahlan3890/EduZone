@@ -3,6 +3,7 @@ import { Container, Row, Col } from "reactstrap";
 import axios from "axios";
 import OnCourseCard from "./OnCourseCard.jsx";
 import "./On-course.css";
+import { Fade} from "react-awesome-reveal";
 
 const headingStyles = {
   fontSize: '2rem',
@@ -58,27 +59,26 @@ const OnCourse = () => {
     <section style={{ marginTop: '100px' }}>
       <Container>
         <Row>
-          {!loading && !error && courses.length > 0 && (
-            <Col lg="12" className="text-center mb-5">
-              <h2 style={headingStyles}>Ongoing Courses</h2>
-            </Col>
-          )}
+          <Col lg="12" className="text-center mb-5">
+            <h2 style={headingStyles}>Ongoing Courses</h2>
+          </Col>
+
+          <Fade duration={2000} direction="up">
 
           <div className="d-flex flex-wrap">
             {loading ? (
               <p>Loading...</p>
             ) : error ? (
               <p>{error}</p>
-            ) : courses.length > 0 ? (
+            ) : (
               courses.map((item) => (
                 <div className="m-2" key={item.id}>
                   <OnCourseCard item={item} />
                 </div>
               ))
-            ) : (
-              <p>No ongoing courses available.</p>
             )}
           </div>
+          </Fade>
         </Row>
       </Container>
     </section>
