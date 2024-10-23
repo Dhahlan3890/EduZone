@@ -244,30 +244,14 @@ export function Profile() {
           <div className="grid-cols-1 mb-12 grid gap-12 px-4 lg:grid-cols-2 xl:grid-cols-3">
             <div>
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Notification settings
+                About EduZone
               </Typography>
-              <div className="flex flex-col gap-12">
-                {platformSettingsData.map(({ title, options }) => (
-                  <div key={title}>
-                    <Typography className="mb-4 block text-xs font-semibold uppercase text-blue-gray-500">
-                      {title}
-                    </Typography>
-                    <div className="flex flex-col gap-6">
-                      {options.map(({ checked, label }) => (
-                        <Switch
-                          key={label}
-                          id={label}
-                          label={label}
-                          defaultChecked={checked}
-                          labelProps={{
-                            className: 'text-sm font-normal text-blue-gray-500',
-                          }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <Typography variant="body1" color="blue-gray" className="mb-4">
+                "EduZone is a web application designed to facilitate learning and collaboration among students and educators. Our mission is to create a platform that fosters knowledge sharing, innovation, and growth."
+              </Typography>
+              <Typography variant="body1" color="blue-gray" className="mb-4">
+                "With EduZone, you can connect with peers, join study groups, and access a wealth of educational resources. Explore new ideas, share your knowledge, and become part of a vibrant community dedicated to learning."
+              </Typography>
             </div>
             <ProfileInfoCard
               title="Profile Information"
@@ -291,13 +275,13 @@ export function Profile() {
                 ) : (
                   profile.institute
                 ),
-                social: (
-                  <div className="flex items-center gap-4">
-                    <i className="fa-brands fa-facebook text-blue-700" />
-                    <i className="fa-brands fa-twitter text-blue-400" />
-                    <i className="fa-brands fa-instagram text-purple-500" />
-                  </div>
-                ),
+                // social: (
+                //   <div className="flex items-center gap-4">
+                //     <i className="fa-brands fa-facebook text-blue-700" />
+                //     <i className="fa-brands fa-twitter text-blue-400" />
+                //     <i className="fa-brands fa-instagram text-purple-500" />
+                //   </div>
+                // ),
               }}
               action={
                 <div style={{ display: 'flex' }}>
