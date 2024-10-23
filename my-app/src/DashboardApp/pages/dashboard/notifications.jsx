@@ -117,7 +117,6 @@ export function Notifications() {
            value={message}
            onChange={(e) => setMessage(e.target.value)}
            required>
-
           </Textarea>
           
           <br />
@@ -146,14 +145,9 @@ export function Notifications() {
               color="gray"
               onClose={() => setShowAlerts((current) => ({ ...current, ["gray"]: false }))}
             >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop:"20px" }}>
-                <div style={{display:"flex"}}>
-              {notification.message}
-              </div>
-              <div style={{display:"flex"}}>
-                {notification.created_at}
-              </div>
-              </div>
+
+              {notification.message} <span color="red" style={{color:"red"}}>on {notification.created_at.substring(0, 10)}</span>
+
             </Alert>
           ))}
         </CardBody>
