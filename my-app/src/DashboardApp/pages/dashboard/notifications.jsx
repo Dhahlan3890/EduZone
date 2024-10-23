@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Typography,
   Alert,
@@ -9,7 +9,6 @@ import {
   Textarea,
 } from "@material-tailwind/react";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
-import { useEffect, useState } from "react";
 import axios from "axios";
 const swal = require('sweetalert2');
 
@@ -53,6 +52,7 @@ export function Notifications() {
         showConfirmButton: false,
       });
       setMessage('');
+      fetchNotifications(); // Fetch notifications after adding a new one
     } catch (error) {
       console.error('Error adding notification:', error);
       swal.fire({
@@ -67,31 +67,31 @@ export function Notifications() {
     }
   };
 
-
   const [notifications, setNotifications] = useState([]);
   const [notification_loading, setNotification_Loading] = useState(false);
 
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const authTokens = localStorage.getItem('authTokens'); 
-        const tokens = JSON.parse(authTokens);
-        const token = tokens.access;
-        const response = await axios.get('http://localhost:8000/api/notifications/', 
-          {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+  const fetchNotifications = async () => {
+    setNotification_Loading(true);
+    try {
+      const authTokens = localStorage.getItem('authTokens'); 
+      const tokens = JSON.parse(authTokens);
+      const token = tokens.access;
+      const response = await axios.get('http://localhost:8000/api/notifications/', 
+        {
+        headers: {
+          'Authorization': `Bearer ${token}`
         }
-        );
-        setNotifications(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching notifications:', error);
-        setLoading(false);
       }
-    };
+      );
+      setNotifications(response.data);
+      setNotification_Loading(false);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+      setNotification_Loading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchNotifications();
   }, []);
 
@@ -146,7 +146,14 @@ export function Notifications() {
               color="gray"
               onClose={() => setShowAlerts((current) => ({ ...current, ["gray"]: false }))}
             >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop:"20px" }}>
+                <div style={{display:"flex"}}>
               {notification.message}
+              </div>
+              <div style={{display:"flex"}}>
+                {notification.created_at}
+              </div>
+              </div>
             </Alert>
           ))}
         </CardBody>

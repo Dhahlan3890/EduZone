@@ -260,6 +260,20 @@ class CourseViewSet(viewsets.ModelViewSet):
         Enrollment.objects.create(course=course, student=student)
         return Response({"detail": "Successfully enrolled in the course."}, status=status.HTTP_201_CREATED)
 
+    @action(detail=True, methods=['put'])
+    def update_course(self, request, pk=None):
+        course = self.get_object()
+        serializer = CourseSerializer(course, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        course = self.get_object()
+        course.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
@@ -329,3 +343,17 @@ class ProjectViewSet(viewsets.ModelViewSet):
         # Create a new enrollment
         ProjectEnrollment.objects.create(project=project, student=student)
         return Response({"detail": "Successfully enrolled in the project."}, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['put'])
+    def update_project(self, request, pk=None):
+        project = self.get_object()
+        serializer = ProjectSerializer(project, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        project = self.get_object()
+        project.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
