@@ -45,7 +45,7 @@ function VerticalTabs({ subtitle }) {
 function SubtitleTabs({ selectedCourse }) {
   const data = selectedCourse.subtitles.length > 0 ? (
     selectedCourse.subtitles.map((subtitle) => ({
-      label: `Subtitle ${subtitle.id}: ${subtitle.title}`,
+      label: `${subtitle.title}`,
       value: subtitle.id,
       desc: (
         <div>
@@ -77,6 +77,8 @@ function SubtitleTabs({ selectedCourse }) {
   );
 
   return (
+    <>
+    <Typography variant="h1">{selectedCourse.title}</Typography>
     <Tabs value={data[0].value}>
       <TabsHeader>
         {data.map(({ label, value }) => (
@@ -93,6 +95,7 @@ function SubtitleTabs({ selectedCourse }) {
         ))}
       </TabsBody>
     </Tabs>
+    </>
   );
 }
 

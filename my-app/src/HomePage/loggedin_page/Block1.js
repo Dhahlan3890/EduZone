@@ -1,16 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardBody,
   CardHeader,
   Typography,
   Button,
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
+  Input,
+  Textarea,
 } from "@material-tailwind/react";
 import { BriefcaseIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import TableFooter1 from "./TableFoot";
 
-function BCard({ title, options, icon, detail }) {
+function BCard({ title, options, icon, detail, onEdit, onDelete }) {
   return (
     <Card
       shadow={false}
@@ -37,6 +43,7 @@ function BCard({ title, options, icon, detail }) {
             size="sm"
             variant="text"
             className="flex items-center gap-2"
+            onClick={onEdit}
           >
             <PencilIcon className="h-4 w-4 text-gray-600" />
             <Typography className="!font-semibold text-xs text-gray-600 md:block hidden">
@@ -48,6 +55,7 @@ function BCard({ title, options, icon, detail }) {
             variant="text"
             color="red"
             className="flex items-center gap-2"
+            onClick={onDelete}
           >
             <TrashIcon className="h-4 w-4 text-red-500" />
             <Typography className="!font-semibold text-xs text-red-500 md:block hidden">
@@ -79,31 +87,44 @@ function BCard({ title, options, icon, detail }) {
   );
 }
 
-const billingCardData = [
-  {
-    icon: <BriefcaseIcon className="h-6 w-6 text-gray-900" />,
-    title: "Introduction to Python",
-    options: {
-      "Date": "06/06/2024"
-    },
-  },
-  {
-    icon: <BriefcaseIcon className="h-6 w-6 text-gray-900" />,
-    title: "Wireless and Mobile Communiaction",
-    options: {
-      "Date": "11/06/2024"
-    },
-  },
-  {
-    icon: <BriefcaseIcon className="h-6 w-6 text-gray-900" />,
-    title: "Embedded System",
-    options: {
-      "Date": "20/06/2024"
-    },
-  },
-];
-
 function Block1() {
+  const [notes, setNotes] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [currentNote, setCurrentNote] = useState(null);
+  const [title, setTitle] = useState("");
+  const [detail, setDetail] = useState("");
+
+  const handleOpen = () => setIsOpen(!isOpen);
+
+  const handleAdd = () => {
+    setCurrentNote(null);
+    setTitle("");
+    setDetail("");
+    handleOpen();
+  };
+
+  const handleEdit = (note) => {
+    setCurrentNote(note);
+    setTitle(note.title);
+    setDetail(note.detail);
+    handleOpen();
+  };
+
+  const handleDelete = (noteToDelete) => {
+    setNotes(notes.filter(note => note !== noteToDelete));
+  };
+
+  const handleSave = () => {
+    if (currentNote) {
+      setNotes(notes.map(note => 
+        note === currentNote ? { ...note, title, detail } : note
+      ));
+    } else {
+      setNotes([...notes, { title, detail, icon: <BriefcaseIcon className="h-5 w-5" /> }]);
+    }
+    handleOpen();
+  };
+
   return (
     <section className="max-w-4xl !mx-auto px-8 py-20 w-full">
       <Card shadow={false}>
@@ -129,6 +150,7 @@ function Block1() {
               variant="outlined"
               color="gray"
               className="flex justify-center gap-3 md:max-w-fit w-full ml-auto"
+              onClick={handleAdd}
             >
               <PlusIcon strokeWidth={3} className="h-4 w-4" />
               add new note
@@ -136,14 +158,44 @@ function Block1() {
           </div>
         </CardHeader>
         <CardBody className="flex flex-col gap-4 !p-4">
-          {billingCardData.map((props, key) => (
-            <BCard key={key} {...props} />
+          {notes.map((note, key) => (
+            <BCard 
+              key={key} 
+              {...note} 
+              onEdit={() => handleEdit(note)}
+              onDelete={() => handleDelete(note)}
+            />
           ))}
         </CardBody>
       </Card>
       <TableFooter1/>
+
+      <Dialog open={isOpen} handler={handleOpen}>
+        <DialogHeader>{currentNote ? "Edit Note" : "Add New Note"}</DialogHeader>
+        <DialogBody>
+          <div className="flex flex-col gap-4">
+            <Input 
+              label="Title" 
+              value={title} 
+              onChange={(e) => setTitle(e.target.value)} 
+            />
+            <Textarea 
+              label="Detail" 
+              value={detail} 
+              onChange={(e) => setDetail(e.target.value)} 
+            />
+          </div>
+        </DialogBody>
+        <DialogFooter>
+          <Button variant="text" color="red" onClick={handleOpen} className="mr-1">
+            <span>Cancel</span>
+          </Button>
+          <Button variant="gradient" color="green" onClick={handleSave}>
+            <span>Save</span>
+          </Button>
+        </DialogFooter>
+      </Dialog>
     </section>
-    
   );
 }
 
