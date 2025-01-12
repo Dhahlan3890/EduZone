@@ -47,7 +47,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "CI=false react-scripts build",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "build:liveapp-css": "tailwindcss -i ./src/LiveApp/liveapp.css -o ./src/LiveApp/liveapp.output.css --config ./tailwind.liveapp.config.js"
@@ -71,7 +71,6 @@
     ]
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "autoprefixer": "^10.4.19",
     "concurrently": "^8.2.2",
     "cypress": "^13.15.0",
