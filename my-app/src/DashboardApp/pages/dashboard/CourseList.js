@@ -1,22 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {
-  Typography,
-  Card,
-  CardHeader,
-  CardBody,
-  IconButton,
-  Menu,
-  MenuHandler,
-  MenuList,
-  MenuItem,
-  Avatar,
-  Tooltip,
-  Progress,
-  Textarea,
-  Button,
-  Input
-} from "@material-tailwind/react";
 import { StatisticsCard } from "../../widgets/cards/index";
 
 const CourseList = () => {
@@ -43,9 +26,6 @@ const CourseList = () => {
     fetchCourses();
   }, []);
 
-  const toggleCourseDetails = (courseId) => {
-    setSelectedCourseId(selectedCourseId === courseId ? null : courseId);
-  };
 
   return (
     <div>

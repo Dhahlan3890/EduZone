@@ -1,25 +1,21 @@
 // src/App.js
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { Routes, Route, Navigate} from 'react-router-dom';
 import { Dashboard } from './DashboardApp/layouts/index';
 import  Homepage  from './HomePage/MainHomepage';
 import Login from './Login/login';
 import Signup from './Login/Signup';
 import PrivateRoute from './PrivateRoute';
-import AuthService from './authService';
 import { AuthProvider } from './context/AuthContext';
 import RoleSelector from './Login/role';
 import StreamingApp from './DashboardApp/pages/dashboard/LiveStreaming';
 import { Courseplay } from './DashboardApp/pages/dashboard/Coursepage';
 import { Projectplay } from './DashboardApp/pages/dashboard/Projectpage';
-import LiveApp from './LiveApp/App';
 import LiveAppStream from './LiveApp';
 import EditCourse from './DashboardApp/pages/dashboard/EditCourse';
 import EditProject from './DashboardApp/pages/dashboard/EditProject';
 // import CheckoutForm from './HomePage/loggedin_page/Courses-section/paycard';
 
 function App() {
-  const location = useLocation();
 
   // useEffect(() => {
   //   if (!location.pathname.startsWith('/dashboard')) {

@@ -12,7 +12,7 @@ function VerticalTabs({ subtitle }) {
       value: video.id,
       desc: (
         <video className="h-full w-full rounded-lg" controls autoplay>
-          <source src={video.video} type="video/mp4" />
+          <source src={video.video} type="video/mp4"/>
           Your browser does not support the video tag.
         </video>
       ),
@@ -102,7 +102,6 @@ function SubtitleTabs({ selectedCourse }) {
 // Courseplay Component
 export function Courseplay() {
   const { courseid } = useParams();
-  const [courses, setCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
 
   useEffect(() => {
@@ -116,7 +115,6 @@ export function Courseplay() {
             Authorization: `Bearer ${token}`,
           },
         });
-        setCourses(response.data);
         const course = response.data.find((course) => course.id.toString() === courseid);
         setSelectedCourse(course);
       } catch (error) {

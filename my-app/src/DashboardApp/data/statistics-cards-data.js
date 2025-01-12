@@ -1,9 +1,3 @@
-import {
-  BanknotesIcon,
-  UserPlusIcon,
-  UsersIcon,
-  ChartBarIcon,
-} from "@heroicons/react/24/solid";
 import Ibm from "../../img/ibm.png";
 import Google from "../../img/google_logo.jpeg";
 import Stanford from "../../img/stanford_logo.png"
