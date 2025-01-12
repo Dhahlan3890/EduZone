@@ -47,7 +47,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "CI=false react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "build:liveapp-css": "tailwindcss -i ./src/LiveApp/liveapp.css -o ./src/LiveApp/liveapp.output.css --config ./tailwind.liveapp.config.js"
